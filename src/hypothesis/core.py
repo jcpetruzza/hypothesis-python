@@ -656,6 +656,9 @@ class StateForActualGivenExecution(object):
         note_engine_for_statistics(runner)
         run_time = time.time() - self.start_time
 
+        if runner.call_count == 0:
+            return
+
         self.used_examples_from_database = runner.used_examples_from_database
 
         if runner.used_examples_from_database:
@@ -675,8 +678,6 @@ class StateForActualGivenExecution(object):
                 )
 
         timed_out = runner.exit_reason == ExitReason.timeout
-        if runner.last_data is None:
-            return
         if runner.interesting_examples:
             self.falsifying_examples = sorted(
                 [d for d in runner.interesting_examples.values()],
@@ -955,8 +956,9 @@ def find(specifier, condition, settings=None, random=None, database_key=None):
     runner.run()
     note_engine_for_statistics(runner)
     run_time = time.time() - start
-    if runner.last_data.status == Status.INTERESTING:
-        data = ConjectureData.for_buffer(runner.last_data.buffer)
+    if runner.interesting_examples:
+        data = ConjectureData.for_buffer(
+            list(runner.interesting_examples.values())[0].buffer)
         with BuildContext(data):
             return data.draw(search)
     if (
