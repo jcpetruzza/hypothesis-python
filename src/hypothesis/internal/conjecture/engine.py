@@ -1176,10 +1176,37 @@ class TargetSelector(object):
 
 
 class Shrinker(object):
+    """A shrinker is a child object of a ConjectureRunner which is designed to
+    manage the associated state of a particular shrink problem.
+
+    Currently the only shrink problem we care about is "interesting and with a
+    particular interesting_origin", but this is abstracted into a general
+    purpose predicate for more flexibility later - e.g. we are likely to want
+    to shrink with respect to a particular coverage target later.
+
+    Data with a status < VALID may be assumed not to satisfy the predicate.
+
+    The expected usage pattern is that this is only ever called from within the
+    engine.
+
+    """
+
     def __init__(self, engine, initial, predicate):
+        """Create a shrinker for a particular engine, with a given starting
+        point and predicate. When shrink() is called it will attempt to find an
+        example for which predicate is True and which is strictly smaller than
+        initial.
+
+        Note that initial is a ConjectureData object, and predicate
+        takes ConjectureData objects.
+
+        """
         self.__engine = engine
-        self.shrink_target = initial
         self.__predicate = predicate
+
+        # We keep track of the current best example on the shrink_target
+        # attribute.
+        self.shrink_target = initial
 
     def incorporate_new_buffer(self, buffer):
         buffer = hbytes(buffer[:self.shrink_target.index])
