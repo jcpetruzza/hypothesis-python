@@ -354,20 +354,6 @@ class ConjectureRunner(object):
         return b'.'.join((self.database_key, b'coverage'))
 
     def note_details(self, data):
-        if (
-            data.status == Status.INTERESTING
-            and self.database is not None
-        ):
-            try:
-                existing = self.interesting_examples[data.interesting_origin]
-                is_canon = sort_key(data.buffer) <= sort_key(existing.buffer)
-            except KeyError:
-                is_canon = False
-
-            if is_canon:
-                self.save_buffer(data.buffer)
-            else:
-                self.save_buffer(data.buffer, self.secondary_key)
         runtime = max(data.finish_time - data.start_time, 0.0)
         self.all_runtimes.append(runtime)
         self.all_drawtimes.extend(data.draw_times)
