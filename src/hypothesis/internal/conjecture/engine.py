@@ -360,9 +360,9 @@ class ConjectureRunner(object):
         ):
             try:
                 existing = self.interesting_examples[data.interesting_origin]
-                is_canon = sort_key(data.buffer) <= sort_key(existing.buffer)
+                is_canon = sort_key(data.buffer) < sort_key(existing.buffer)
             except KeyError:
-                is_canon = False
+                is_canon = True
 
             if is_canon:
                 self.save_buffer(data.buffer)
