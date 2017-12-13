@@ -54,8 +54,7 @@ from hypothesis.internal.reflection import is_mock, proxies, nicerepr, \
     define_function_signature, convert_positional_arguments, \
     get_pretty_function_description
 from hypothesis.internal.healthcheck import fail_health_check
-from hypothesis.internal.conjecture.data import Status, StopTest, \
-    ConjectureData
+from hypothesis.internal.conjecture.data import StopTest, ConjectureData
 from hypothesis.searchstrategy.strategies import SearchStrategy
 from hypothesis.internal.conjecture.engine import ExitReason, \
     ConjectureRunner, sort_key
@@ -656,9 +655,6 @@ class StateForActualGivenExecution(object):
         note_engine_for_statistics(runner)
         run_time = time.time() - self.start_time
 
-        if runner.call_count == 0:
-            return
-
         self.used_examples_from_database = runner.used_examples_from_database
 
         if runner.used_examples_from_database:
@@ -678,6 +674,8 @@ class StateForActualGivenExecution(object):
                 )
 
         timed_out = runner.exit_reason == ExitReason.timeout
+        if runner.call_count == 0:
+            return
         if runner.interesting_examples:
             self.falsifying_examples = sorted(
                 [d for d in runner.interesting_examples.values()],
