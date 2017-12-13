@@ -1370,7 +1370,8 @@ class Shrinker(object):
 
         self.debug('Simultaneous shrinking of duplicated blocks')
         counts = Counter(
-            self.shrink_target.buffer[u:v] for u, v in self.shrink_target.blocks
+            self.shrink_target.buffer[u:v]
+            for u, v in self.shrink_target.blocks
         )
         blocks = [buffer for buffer, count in counts.items() if count > 1]
 
