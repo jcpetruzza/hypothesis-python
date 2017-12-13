@@ -836,9 +836,12 @@ class ConjectureRunner(object):
         self.exit_with(ExitReason.finished)
 
     def shrink(self, example, predicate):
-        s = Shrinker(self, example, predicate)
+        s = self.new_shrinker(example, predicate)
         s.shrink()
         return s.shrink_target
+
+    def new_shrinker(self, example, predicate):
+        return Shrinker(self, example, predicate)
 
     def prescreen_buffer(self, buffer):
         """Attempt to rule out buffer as a possible interesting candidate.
